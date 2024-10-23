@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 #define TAM_NOME 30
-#define QTD_ESTADOS 3
-#define TEMP_CHAR 9999
+#define QTD_ESTADOS 26
+#define TEMP_CHAR 999
 
 struct Acidentes {
     char nomeEstado[TAM_NOME];
