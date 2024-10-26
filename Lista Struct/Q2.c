@@ -18,6 +18,7 @@ void cadastroProduto(struct Papelaria cadastro[], int tam);
 void alterarValor(struct Papelaria cadastro[], int tam);
 float valorProduto(struct Papelaria cadastro[], int tam);
 int estoqueProduto(struct Papelaria cadastro[], int tam);
+void vendaProduto(struct Papelaria cadastro[], int tam);
 void atualizarEstoque(struct Papelaria cadastro[], int tam);
 void codigoDescricaoProdutos(struct Papelaria cadastro[], int tam);
 void codigoDescricaoProdutosZero(struct Papelaria cadastro[], int tam);
@@ -67,7 +68,7 @@ int main() {
                 }
                 break;
             case 5:
-                printf("Função de venda ainda não implementada.\n");
+                vendaProduto(cadastro, TAM_PROD);
                 break;
             case 6:
                 atualizarEstoque(cadastro, TAM_PROD);
@@ -79,7 +80,7 @@ int main() {
                 codigoDescricaoProdutosZero(cadastro, TAM_PROD);
                 break;
             case 0:
-                printf("Encerrando o programa.\n");
+                printf("Encerrando o programa.\n\n");
                 break;
             default:
                 printf("Opção inválida. Tente novamente.\n");
@@ -108,25 +109,31 @@ void preencherZero(struct Papelaria cadastro[], int tam) {
 void cadastroProduto(struct Papelaria cadastro[], int tam) {
     int i = 0;
     char temp[TAM_DESC];
-    printf("\nCADASTRO\n");
-    while(cadastro[i].codigo != 0) {
-        ++i;
+    for (i = 0; i < tam; i++) {
+        if (cadastro[i].codigo == 0) {
+            break;
+        }
     }
-    printf("Código: ");
-    scanf("%d", &cadastro[i].codigo);
-    printf("Estoque: ");
-    scanf("%d", &cadastro[i].estoque);
-    printf("Descrição: ");
-    lerStr(temp, TAM_DESC);
-    lerStr(cadastro[i].descricao, TAM_DESC);
-    printf("Valor: ");
-    scanf("%f", &cadastro[i].valor);
-    printf("\n");
+    if (i >= tam) {
+        printf("\nMáximo de cadastros já realizado!\n\n");
+    } else {
+        printf("\nCADASTRO\n");
+        printf("Código: ");
+        scanf("%d", &cadastro[i].codigo);
+        printf("Estoque: ");
+        scanf("%d", &cadastro[i].estoque);
+        printf("Descrição: ");
+        lerStr(temp, TAM_DESC);
+        lerStr(cadastro[i].descricao, TAM_DESC);
+        printf("Valor: ");
+        scanf("%f", &cadastro[i].valor);
+        printf("\n");
+    }
 }
 
 void alterarValor(struct Papelaria cadastro[], int tam) {
     int cod, encontrado = 0;
-    printf("\nDigite o código do produto que deseja alterar: ");
+    printf("\nDigite o código do produto para alterar o valor: ");
     scanf("%d", &cod);
     for(int i = 0; i < tam; ++i) {
         if(cadastro[i].codigo == cod) {
@@ -165,9 +172,50 @@ int estoqueProduto(struct Papelaria cadastro[], int tam) {
     return -1;
 }
 
+void vendaProduto(struct Papelaria cadastro[], int tam) {
+    int cod, encontrado = 0, quantidade, escolha;
+    float preco;
+    printf("\nDigite o código do produto para venda: ");
+    scanf("%d", &cod);
+    for(int i = 0; i < tam; ++i) {
+        if(cadastro[i].codigo == cod) {
+            printf("Insira a quantidade: ");
+            scanf("%d", &quantidade);
+            if(quantidade < cadastro[i].estoque) {
+                cadastro[i].estoque -= quantidade;
+                preco = cadastro[i].valor * quantidade;
+                printf("\nO valor a ser pago é R$%.2f.\n\n", preco);
+            } else if(cadastro[i].estoque == 0) {
+                printf("\nEstoque deste produto zerado.\n\n");
+            } else if(quantidade > cadastro[i].estoque) {
+                printf("\nEstoque insuficiente. Quantidade disponível: %d\nDeseja efetuar a compra? (1)Sim  (2)Não\n", cadastro[i].estoque);
+                scanf("%d", &escolha);
+                switch(escolha)
+                {
+                case 1:
+                    preco = cadastro[i].estoque * cadastro[i].valor;
+                    printf("O valor a ser pago é R$%.2f.\n\n", preco);
+                    cadastro[i].estoque = 0;
+                case 2:
+                    break;
+                default:
+                    printf("Opção inválida\n\n");
+                    break;
+                }
+            }
+            encontrado = 1;
+            break;
+        }
+    }
+    if(!encontrado) {
+        printf("\nCódigo não encontrado.\n");
+    }
+}
+
+
 void atualizarEstoque(struct Papelaria cadastro[], int tam) {
     int cod, encontrado = 0;
-    printf("\nDigite o código do produto que deseja atualizar o estoque: ");
+    printf("\nDigite o código do produto para atualizar o estoque: ");
     scanf("%d", &cod);
     for(int i = 0; i < tam; ++i) {
         if(cadastro[i].codigo == cod) {
