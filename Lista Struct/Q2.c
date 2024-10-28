@@ -3,7 +3,7 @@
 #include <string.h>
 
 #define TAM_DESC 101
-#define TAM_PROD 2
+#define TAM_PROD 40
 #define NOME_PROD 50
 
 struct Papelaria {
